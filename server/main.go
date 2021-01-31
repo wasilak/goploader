@@ -1,13 +1,14 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
 
 	rice "github.com/GeertJohan/go.rice"
 	"github.com/gin-gonic/gin"
-	flag "github.com/ogier/pflag"
+	"github.com/spf13/pflag"
 
 	"github.com/Depado/goploader/server/conf"
 	"github.com/Depado/goploader/server/database"
@@ -27,11 +28,13 @@ func main() {
 	tbox, _ := rice.FindBox("templates")
 	abox, _ := rice.FindBox("assets")
 
-	flag.StringVarP(&cp, "conf", "c", "conf.yml", "Local path to configuration file.")
-	flag.BoolVarP(&initial, "initial", "i", false, "Run the initial setup of the server.")
-	flag.Parse()
+	flag.StringVar(&cp, "conf", "./", "Local path to configuration file.")
+	flag.BoolVar(&initial, "initial", false, "Run the initial setup of the server.")
 
-	if err = conf.Load(cp, !initial); err != nil || initial {
+	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
+	pflag.Parse()
+
+	if err = conf.Load(pflag.CommandLine, initial); err != nil || initial {
 		setup.Run()
 	}
 	if err = database.Initialize(); err != nil {

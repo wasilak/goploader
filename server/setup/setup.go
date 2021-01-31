@@ -8,7 +8,7 @@ import (
 
 	"gopkg.in/yaml.v2"
 
-	"github.com/GeertJohan/go.rice"
+	rice "github.com/GeertJohan/go.rice"
 	"github.com/gin-gonic/gin"
 
 	"github.com/Depado/goploader/server/conf"
@@ -28,11 +28,6 @@ func configure(c *gin.Context) {
 		errors := form.Validate()
 		if len(errors) > 0 {
 			c.JSON(http.StatusBadRequest, errors)
-			return
-		}
-		if err = form.FillDefaults(); err != nil {
-			fmt.Println("An error occured while filling default values :", err)
-			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
 		if dat, err = yaml.Marshal(&form); err != nil {

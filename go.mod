@@ -22,6 +22,8 @@ require (
 	github.com/ogier/pflag v0.0.1
 	github.com/prometheus/client_golang v1.8.0
 	github.com/prometheus/common v0.15.0 // indirect
+	github.com/spf13/pflag v1.0.3
+	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.6.1 // indirect
 	github.com/ugorji/go v1.2.0 // indirect
 	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect

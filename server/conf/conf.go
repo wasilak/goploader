@@ -1,11 +1,11 @@
 package conf
 
 import (
-	"io/ioutil"
-	"os"
+	"log"
 
 	"github.com/imdario/mergo"
-	"gopkg.in/yaml.v2"
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
 )
 
 // C is the exported global configuration variable
@@ -13,64 +13,64 @@ var C Conf
 
 // Conf is the struct containing the configuration of the server
 type Conf struct {
-	NameServer string `yaml:"name_server" form:"name_server"`
-	Host       string `yaml:"host" form:"host"`
-	Port       int    `yaml:"port" form:"port"`
-	AppendPort bool   `yaml:"append_port" form:"append_port"`
+	NameServer string `mapstructure:"name_server" form:"name_server"`
+	Host       string `mapstructure:"host" form:"host"`
+	Port       int    `mapstructure:"port" form:"port"`
+	AppendPort bool   `mapstructure:"append_port" form:"append_port"`
 
-	Token string `yaml:"token" form:"token"`
+	Token string `mapstructure:"token" form:"token"`
 
-	ServeHTTPS bool   `yaml:"serve_https" form:"serve_https"`
-	SSLCert    string `yaml:"ssl_cert" form:"ssl_cert"`
-	SSLPrivKey string `yaml:"ssl_private_key" form:"ssl_private_key"`
+	ServeHTTPS bool   `mapstructure:"serve_https" form:"serve_https"`
+	SSLCert    string `mapstructure:"ssl_cert" form:"ssl_cert"`
+	SSLPrivKey string `mapstructure:"ssl_private_key" form:"ssl_private_key"`
 
-	UploadDir    string  `yaml:"upload_dir" form:"upload_dir"`
-	DB           string  `yaml:"db" form:"db"`
-	UniURILength int     `yaml:"uniuri_length" form:"uniuri_length"`
-	KeyLength    int     `yaml:"key_length" form:"key_length"`
-	SizeLimit    int64   `yaml:"size_limit" form:"size_limit"`
-	ViewLimit    int64   `yaml:"view_limit" form:"view_limit"`
-	DiskQuota    float64 `yaml:"disk_quota" form:"disk_quota"`
-	LogLevel     string  `yaml:"loglevel" form:"loglevel"`
+	UploadDir    string  `mapstructure:"upload_dir" form:"upload_dir"`
+	DB           string  `mapstructure:"db" form:"db"`
+	UniURILength int     `mapstructure:"uniuri_length" form:"uniuri_length"`
+	KeyLength    int     `mapstructure:"key_length" form:"key_length"`
+	SizeLimit    int64   `mapstructure:"size_limit" form:"size_limit"`
+	ViewLimit    int64   `mapstructure:"view_limit" form:"view_limit"`
+	DiskQuota    float64 `mapstructure:"disk_quota" form:"disk_quota"`
+	LogLevel     string  `mapstructure:"loglevel" form:"loglevel"`
 
-	Stats             bool `yaml:"stats" form:"stats"`
-	SensitiveMode     bool `yaml:"sensitive_mode" form:"sensitive_mode"`
-	NoWeb             bool `yaml:"no_web" form:"no_web"`
-	FullDoc           bool `yaml:"fulldoc" form:"fulldoc"`
-	AlwaysDownload    bool `yaml:"always_download" form:"always_download"`
-	DisableEncryption bool `yaml:"disable_encryption" form:"disable_encryption"`
-	PrometheusEnabled bool `yaml:"prometheus_enabled" form:"prometheus_enabled"`
+	Stats             bool `mapstructure:"stats" form:"stats"`
+	SensitiveMode     bool `mapstructure:"sensitive_mode" form:"sensitive_mode"`
+	NoWeb             bool `mapstructure:"no_web" form:"no_web"`
+	FullDoc           bool `mapstructure:"fulldoc" form:"fulldoc"`
+	AlwaysDownload    bool `mapstructure:"always_download" form:"always_download"`
+	DisableEncryption bool `mapstructure:"disable_encryption" form:"disable_encryption"`
+	PrometheusEnabled bool `mapstructure:"prometheus_enabled" form:"prometheus_enabled"`
 }
 
 // UnparsedConf is the configuration when it's still unparsed properly
 type UnparsedConf struct {
-	NameServer string `yaml:"name_server" form:"name_server"`
-	Host       string `yaml:"host" form:"host"`
-	Port       int    `yaml:"port" form:"port"`
-	AppendPort bool   `yaml:"append_port" form:"append_port"`
+	NameServer string `mapstructure:"name_server" form:"name_server"`
+	Host       string `mapstructure:"host" form:"host"`
+	Port       int    `mapstructure:"port" form:"port"`
+	AppendPort bool   `mapstructure:"append_port" form:"append_port"`
 
-	Token string `yaml:"token" form:"token"`
+	Token string `mapstructure:"token" form:"token"`
 
-	ServeHTTPS bool   `yaml:"serve_https" form:"serve_https"`
-	SSLCert    string `yaml:"ssl_cert" form:"ssl_cert"`
-	SSLPrivKey string `yaml:"ssl_private_key" form:"ssl_private_key"`
+	ServeHTTPS bool   `mapstructure:"serve_https" form:"serve_https"`
+	SSLCert    string `mapstructure:"ssl_cert" form:"ssl_cert"`
+	SSLPrivKey string `mapstructure:"ssl_private_key" form:"ssl_private_key"`
 
-	UploadDir    string  `yaml:"upload_dir" form:"upload_dir"`
-	DB           string  `yaml:"db" form:"db"`
-	UniURILength int     `yaml:"uniuri_length" form:"uniuri_length"`
-	KeyLength    int     `yaml:"key_length" form:"key_length"`
-	SizeLimit    int64   `yaml:"size_limit" form:"size_limit"`
-	ViewLimit    int64   `yaml:"view_limit" form:"view_limit"`
-	DiskQuota    float64 `yaml:"disk_quota" form:"disk_quota"`
-	LogLevel     string  `yaml:"loglevel" form:"loglevel"`
+	UploadDir    string  `mapstructure:"upload_dir" form:"upload_dir"`
+	DB           string  `mapstructure:"db" form:"db"`
+	UniURILength int     `mapstructure:"uniuri_length" form:"uniuri_length"`
+	KeyLength    int     `mapstructure:"key_length" form:"key_length"`
+	SizeLimit    int64   `mapstructure:"size_limit" form:"size_limit"`
+	ViewLimit    int64   `mapstructure:"view_limit" form:"view_limit"`
+	DiskQuota    float64 `mapstructure:"disk_quota" form:"disk_quota"`
+	LogLevel     string  `mapstructure:"loglevel" form:"loglevel"`
 
-	Stats             bool `yaml:"stats" form:"stats"`
-	SensitiveMode     bool `yaml:"sensitive_mode" form:"sensitive_mode"`
-	NoWeb             bool `yaml:"no_web" form:"no_web"`
-	FullDoc           bool `yaml:"fulldoc" form:"fulldoc"`
-	AlwaysDownload    bool `yaml:"always_download" form:"always_download"`
-	DisableEncryption bool `yaml:"disable_encryption" form:"disable_encryption"`
-	PrometheusEnabled bool `yaml:"prometheus_enabled" form:"prometheus_enabled"`
+	Stats             bool `mapstructure:"stats" form:"stats"`
+	SensitiveMode     bool `mapstructure:"sensitive_mode" form:"sensitive_mode"`
+	NoWeb             bool `mapstructure:"no_web" form:"no_web"`
+	FullDoc           bool `mapstructure:"fulldoc" form:"fulldoc"`
+	AlwaysDownload    bool `mapstructure:"always_download" form:"always_download"`
+	DisableEncryption bool `mapstructure:"disable_encryption" form:"disable_encryption"`
+	PrometheusEnabled bool `mapstructure:"prometheus_enabled" form:"prometheus_enabled"`
 }
 
 // NewDefault returns a Conf instance filled with default values
@@ -113,23 +113,35 @@ func (c *Conf) FillDefaults() error {
 }
 
 // Load loads the given fp (file path) to the C global configuration variable.
-func Load(fp string, verbose bool) error {
+func Load(flags *pflag.FlagSet, initial bool) error {
 	var err error
-	var conf []byte
-	if conf, err = ioutil.ReadFile(fp); err != nil {
-		return err
-	}
-	if err = yaml.Unmarshal(conf, &C); err != nil {
-		return err
-	}
+	viper.BindPFlags(flags)
+
 	if err = C.FillDefaults(); err != nil {
 		return err
 	}
-	if _, err := os.Stat(C.UploadDir); os.IsNotExist(err) {
-		if err = os.Mkdir(C.UploadDir, 0777); err != nil {
-			return err
+
+	viper.SetEnvPrefix("goploader")
+	viper.AutomaticEnv()
+
+	if !initial {
+		viper.SetConfigName("conf")
+		viper.SetConfigType("yaml")
+		viper.AddConfigPath(viper.GetString("conf"))
+		viper.AddConfigPath(".")
+		if err := viper.ReadInConfig(); err != nil {
+			if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+				return err
+			}
+			log.Println(err)
+			panic(err)
 		}
-	} else if err != nil {
+	}
+
+	err = viper.Unmarshal(&C)
+
+	if err != nil {
+		log.Printf("Unable to decode into struct, %v", err)
 		return err
 	}
 	return nil
